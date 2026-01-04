@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#5eead4">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M.A.M.A. - Mobile Assistant for Medical Assessment</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #0f2027, #0b1418);
+        color: #e6f1f5;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 380px;
+        padding: 32px;
+        border-radius: 16px;
+        background: rgba(20, 35, 40, 0.85);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.4rem;
+        letter-spacing: 0.15em;
+        color: #5eead4;
+      }
+
+      h4 {
+        margin-top: 8px;
+        margin-bottom: 32px;
+        font-weight: 400;
+        color: #a8dadc;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 10px;
+        border: 1px solid rgba(94, 234, 212, 0.25);
+        background-color: rgba(15, 30, 34, 0.9);
+        color: #e6f1f5;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      input::placeholder {
+        color: #8fbfbf;
+      }
+
+      input:focus {
+        border-color: #5eead4;
+        box-shadow: 0 0 0 2px rgba(94, 234, 212, 0.15);
+      }
+
+      button {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #5eead4, #38bdf8);
+        color: #0b1418;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:hover {
+        filter: brightness(1.1);
+      }
+
+      .footer {
+        margin-top: 24px;
+        font-size: 0.85rem;
+        color: #8fbfbf;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>M.A.M.A.</h1>
+      <h4>Mobile Assistant for Medical Assessment</h4>
+
+      <form id="authForm">
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Password" required>
+        <div style="display: flex; gap: 12px; margin-top: 12px;">
+          <button type="submit" id="loginBtn">Log In</button>
+          <button type="button" id="createBtn">Create Account</button>
+          <button type="button" id="dev">devAccess</button>
+        </div>
+      </form>
+
+      <script>
+        const form = document.getElementById('authForm');
+        const createBtn = document.getElementById('createBtn');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Log In clicked! Implement later.');
+        });
+
+        createBtn.addEventListener('click', () => {
+          window.location.href = 'create-account.html';
+        });
+        dev.addEventListener('click', () => {
+          window.location.href = 'inputs.html';
+        });
+      </script>
+    </div>
+  </body>
+</html>

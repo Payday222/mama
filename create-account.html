@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#5eead4">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Account - M.A.M.A.</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #0f2027, #0b1418);
+        color: #e6f1f5;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 380px;
+        padding: 32px;
+        border-radius: 16px;
+        background: rgba(20, 35, 40, 0.85);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.4rem;
+        letter-spacing: 0.15em;
+        color: #5eead4;
+      }
+
+      h4 {
+        margin-top: 8px;
+        margin-bottom: 32px;
+        font-weight: 400;
+        color: #a8dadc;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 10px;
+        border: 1px solid rgba(94, 234, 212, 0.25);
+        background-color: rgba(15, 30, 34, 0.9);
+        color: #e6f1f5;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      input::placeholder {
+        color: #8fbfbf;
+      }
+
+      input:focus {
+        border-color: #5eead4;
+        box-shadow: 0 0 0 2px rgba(94, 234, 212, 0.15);
+      }
+
+      button {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #5eead4, #38bdf8);
+        color: #0b1418;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:hover {
+        filter: brightness(1.1);
+      }
+
+      .footer {
+        margin-top: 24px;
+        font-size: 0.85rem;
+        color: #8fbfbf;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>M.A.M.A.</h1>
+      <h4>Create Your Account</h4>
+
+      <form id="createForm">
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Password" required>
+        <button type="submit">Send Confirmation Code</button>
+      </form>
+
+      <div class="footer">
+        <a href="index.html" style="color: #5eead4; text-decoration: none;">Back to Login</a>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('createForm');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = form.querySelector('input[type="email"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+
+        if (!email || !password) {
+          alert('Please fill out email and password.');
+          return;
+        }
+
+        try {
+          const res = await fetch('http://localhost:3000/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            // Redirect to confirmation page with email and password as params
+            window.location.href = `confirm-account.html?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+          } else {
+            alert(data.message);
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error sending confirmation code.');
+        }
+      });
+    </script>
+  </body>
+</html>

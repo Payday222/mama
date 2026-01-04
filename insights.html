@@ -12,7 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Insights - M.A.M.A.</title>
 
-    <!-- Same styles as other pages -->
     <style>
       * { box-sizing: border-box; }
       body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at top, #0f2027, #0b1418); color: #e6f1f5; }
@@ -72,7 +71,7 @@
       });
       const data = await res.json();
       if (res.ok) {
-        // Handle successful response with correlations
+       
         const dates = data.matchingDates ? data.matchingDates.join(', ') : 'N/A';
         const correlations = data.correlations || 'None found';
         resultsDiv.innerHTML = `
@@ -81,7 +80,7 @@
           <p>Correlations: ${correlations}</p>
         `;
       } else {
-        // Handle error response (e.g., no data or not enough entries)
+   
         resultsDiv.innerHTML = `<p>Error: ${data.message}</p>`;
       }
     } catch (err) {

@@ -139,7 +139,6 @@
           });
           const data = await res.json();
           if (res.ok) {
-            // Redirect to confirmation page with email and password as params
             window.location.href = `confirm-account.html?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
           } else {
             alert(data.message);

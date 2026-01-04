@@ -104,7 +104,7 @@
         display: flex;
         gap: 12px;
         justify-content: center;
-        flex-wrap: wrap; /* Allows wrapping on small screens */
+        flex-wrap: wrap;
       }
 
       .footer a {
@@ -120,7 +120,7 @@
         text-align: center;
         cursor: pointer;
         transition: filter 0.2s;
-        min-width: 120px; /* Ensures consistent button width */
+        min-width: 120px;
       }
 
       .footer a:hover {
@@ -151,7 +151,6 @@
     </div>
 
     <script>
-      // Set default date to today
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').value = today;
 
@@ -180,7 +179,6 @@
           const data = await res.json();
           alert(data.message);
           if (res.ok) {
-            // Clear form for next entry
             form.reset();
             document.getElementById('date').value = today;
           }

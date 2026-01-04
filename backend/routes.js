@@ -2,28 +2,25 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
-const { generateCode } = require('./utils'); // Import helper from utils
+const { generateCode } = require('./utils');
 
 const router = express.Router();
 
-// Temporary storage for confirmation codes (use a database in production)
-const confirmationCodes = new Map(); // Key: email, Value: { code, password, expiresAt }
+
+const confirmationCodes = new Map(); 
 
 router.post('/signup', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
-  // Generate confirmation code
   const code = generateCode();
-  const expiresAt = Date.now() + 10 * 60 * 1000; // Expires in 10 minutes
+  const expiresAt = Date.now() + 10 * 60 * 1000;
 
-  // Store temporarily (in production, save to DB with expiration)
   confirmationCodes.set(email, { code, password, expiresAt });
 
   console.log(`Confirmation code for ${email}: ${code}`);
 
-  // Send confirmation email
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -50,7 +47,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Confirm the code and create the account
+
 router.post('/confirm', (req, res) => {
   const { email, code, password } = req.body;
 
@@ -64,7 +61,7 @@ router.post('/confirm', (req, res) => {
   }
 
   if (Date.now() > stored.expiresAt) {
-    confirmationCodes.delete(email); // Clean up expired code
+    confirmationCodes.delete(email); 
     return res.status(400).json({ message: 'Confirmation code has expired. Please request a new one.' });
   }
 
@@ -72,14 +69,14 @@ router.post('/confirm', (req, res) => {
     return res.status(400).json({ message: 'Invalid confirmation code.' });
   }
 
-  // Code is valid - "create" the account (log it; in production, save to DB)
+
   console.log(`Account created for ${email} with password: ${password}`);
-  confirmationCodes.delete(email); // Remove code after use
+  confirmationCodes.delete(email); 
 
   res.status(200).json({ message: 'Account confirmed and created successfully!' });
 });
 
-// Save daily inputs
+
 router.post('/save-inputs', (req, res) => {
   const { email, date, diet, pain, exercise, notes } = req.body;
 
@@ -87,15 +84,15 @@ router.post('/save-inputs', (req, res) => {
     return res.status(400).json({ message: 'All required fields must be provided.' });
   }
 
-  // Create folder structure: data/email/date/
-  const userDir = path.join(__dirname, '..', 'data', email); // Adjust path since backend/ is a subfolder
+ 
+  const userDir = path.join(__dirname, '..', 'data', email); 
   const dateDir = path.join(userDir, date);
 
-  // Ensure directories exist
+
   if (!fs.existsSync(userDir)) fs.mkdirSync(userDir, { recursive: true });
   if (!fs.existsSync(dateDir)) fs.mkdirSync(dateDir, { recursive: true });
 
-  // Save data as JSON
+ 
   const filePath = path.join(dateDir, 'inputs.json');
   const dataToSave = { diet, pain, exercise, notes, timestamp: new Date().toISOString() };
 

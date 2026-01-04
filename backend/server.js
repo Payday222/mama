@@ -9,13 +9,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Temporary storage for confirmation codes (use a database in production)
 const confirmationCodes = new Map(); // Key: email, Value: { code, password, expiresAt }
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Generate a random 6-digit code
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -44,21 +42,20 @@ function loadUserData(email) {
 // Helper: Analyze correlations (pain level vs. diet words)
 // Helper: Analyze correlations (pain level vs. selected category words)
 function analyzeCorrelations(data, painLevel, category) {
-  // Filter entries where pain contains the level (case-insensitive)
+    
   const matchingEntries = data.filter(entry => entry.pain.toLowerCase().includes(painLevel.toLowerCase()));
   if (matchingEntries.length < 2) return { message: `Not enough data for pain '${painLevel}' (found ${matchingEntries.length} entries).` };
 
-  // Collect words from the selected category on matching dates
+ 
   const wordCounts = {};
   matchingEntries.forEach(entry => {
-    const text = entry[category] || ''; // e.g., entry.diet, entry.exercise
+    const text = entry[category] || ''; 
     const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(word => word.length > 2); // Ignore short words
     words.forEach(word => {
       wordCounts[word] = (wordCounts[word] || 0) + 1;
     });
   });
 
-  // Sort by frequency, exclude common stop words
   const stopWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
   const sortedWords = Object.entries(wordCounts)
     .filter(([word]) => !stopWords.includes(word))
@@ -79,16 +76,13 @@ app.post('/signup', async (req, res) => {
 
   if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
-  // Generate confirmation code
   const code = generateCode();
   const expiresAt = Date.now() + 10 * 60 * 1000; // Expires in 10 minutes
 
-  // Store temporarily (in production, save to DB with expiration)
   confirmationCodes.set(email, { code, password, expiresAt });
 
   console.log(`Confirmation code for ${email}: ${code}`);
 
-  // Send confirmation email
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -115,7 +109,6 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-// Confirm the code and create the account
 app.post('/confirm', (req, res) => {
   const { email, code, password } = req.body;
 
@@ -129,7 +122,7 @@ app.post('/confirm', (req, res) => {
   }
 
   if (Date.now() > stored.expiresAt) {
-    confirmationCodes.delete(email); // Clean up expired code
+    confirmationCodes.delete(email); 
     return res.status(400).json({ message: 'Confirmation code has expired. Please request a new one.' });
   }
 
@@ -137,14 +130,12 @@ app.post('/confirm', (req, res) => {
     return res.status(400).json({ message: 'Invalid confirmation code.' });
   }
 
-  // Code is valid - "create" the account (log it; in production, save to DB)
   console.log(`Account created for ${email} with password: ${password}`);
-  confirmationCodes.delete(email); // Remove code after use
+  confirmationCodes.delete(email); 
 
   res.status(200).json({ message: 'Account confirmed and created successfully!' });
 });
 
-// Save daily inputs
 app.post('/save-inputs', (req, res) => {
   const { email, date, diet, pain, exercise, notes } = req.body;
 
@@ -152,15 +143,12 @@ app.post('/save-inputs', (req, res) => {
     return res.status(400).json({ message: 'All required fields must be provided.' });
   }
 
-  // Create folder structure: data/email/date/
   const userDir = path.join(__dirname, 'data', email);
   const dateDir = path.join(userDir, date);
 
-  // Ensure directories exist
   if (!fs.existsSync(userDir)) fs.mkdirSync(userDir, { recursive: true });
   if (!fs.existsSync(dateDir)) fs.mkdirSync(dateDir, { recursive: true });
 
-  // Save data as JSON
   const filePath = path.join(dateDir, 'inputs.json');
   const dataToSave = { diet, pain, exercise, notes, timestamp: new Date().toISOString() };
 
@@ -174,7 +162,6 @@ app.post('/save-inputs', (req, res) => {
   });
 });
 
-// Analyze data
 app.post('/analyze-data', (req, res) => {
   const { email, painLevel = 'severe', category = 'diet' } = req.body;
 
